@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -10,26 +9,21 @@
         /* * ADVANCED CALCULATOR STYLESHEET
          * Design Goals:
          * - Professional, high-contrast look and feel.
-         * - Clear visual distinction between button types (numbers, operators, functions).
+         * - Clear visual distinction between button types.
          * - Tactile feel with subtle gradients and shadows.
-         * - Fully responsive for all screen sizes.
+         * - Fully responsive for all screen sizes with a full-screen mobile view.
         */
 
         /* Color Palette */
         :root {
-            --bg-color: #212428; /* Dark charcoal background */
-            --calculator-bg: #2a2d32; /* Slightly lighter calculator body */
-            --display-bg: #1e2024; /* Recessed display background */
-            --text-color: #f0f0f0; /* Bright text for high contrast */
-            --history-text-color: #a0a0a0; /* Muted color for history */
-            
-            --btn-number-bg: #3c3f44; /* Neutral gray for numbers */
-            --btn-number-hover: #4a4d52;
-
-            --btn-function-bg: #334e68; /* Muted blue for functions */
-            --btn-function-hover: #406080;
-
-            --btn-operator-bg: #d97706; /* Vibrant orange for operators */
+            --bg-color: #212428;
+            --calculator-bg: #2a2d32;
+            --display-bg: #1e2024;
+            --text-color: #f0f0f0;
+            --history-text-color: #a0a0a0;
+            --btn-number-bg: #3c3f44;
+            --btn-function-bg: #334e68;
+            --btn-operator-bg: #d97706;
             --btn-operator-hover: #f59e0b;
         }
 
@@ -52,6 +46,7 @@
             width: 100%;
             max-width: 420px;
             box-sizing: border-box;
+            transition: all 0.3s ease;
         }
 
         /* Display Screen */
@@ -119,17 +114,8 @@
         .btn.operator:hover, .btn.equals:hover {
             background-color: var(--btn-operator-hover);
         }
-        .btn.operator:active, .btn.equals:active {
-             background-color: var(--btn-operator-bg);
-        }
-
+        
         .btn.function, .btn.clear, .btn.backspace {
-            background-color: var(--btn-function-bg);
-        }
-        .btn.function:hover, .btn.clear:hover, .btn.backspace:hover {
-            background-color: var(--btn-function-hover);
-        }
-        .btn.function:active, .btn.clear:active, .btn.backspace:active {
             background-color: var(--btn-function-bg);
         }
 
@@ -137,24 +123,47 @@
             grid-column: span 2;
         }
 
-        /* Responsive Design */
+        /*
+         * MOBILE RESPONSIVE STYLES
+         * This media query activates on screens 480px or less (most phones).
+         * It overrides the desktop styles to create a full-screen experience.
+        */
         @media (max-width: 480px) {
+            body {
+                /* Prevent any bouncing or scrolling on the page */
+                overflow: hidden;
+            }
             .calculator-container {
-                padding: 15px;
-                border-radius: 0;
-                min-height: 100vh;
-                box-shadow: none;
+                width: 100%;
+                min-height: 100vh; /* Make container full viewport height */
+                border-radius: 0; /* Remove rounded corners for a seamless look */
+                box-shadow: none; /* Remove shadow on mobile */
+                padding: 20px 15px;
+                /* Use flexbox to better distribute space in full-screen mode */
+                display: flex;
+                flex-direction: column;
+                justify-content: space-between;
             }
             .buttons-grid {
-                gap: 12px;
+                /* Allow the button grid to expand and fill available space */
+                flex-grow: 1;
+                gap: 12px; /* Adjust gap for smaller screens */
+                padding-bottom: 20px; /* Add space at the very bottom */
             }
             .btn {
-                padding: 18px 5px;
-                font-size: 1.1rem;
-                border-radius: 10px;
+                padding: 0; /* Reset padding to use flexbox for centering */
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                font-size: 1.3rem; /* Increase font size for better readability */
+                border-radius: 15px; /* Slightly more rounded buttons for a modern feel */
+            }
+            .display-screen {
+                flex-shrink: 0; /* Prevent the display from shrinking */
+                margin-bottom: 20px;
             }
             .main-display {
-                font-size: 2.5rem;
+                font-size: 2.8rem; /* Adjust main display font size */
             }
         }
 
@@ -329,3 +338,4 @@
     </script>
 </body>
 </html>
+
