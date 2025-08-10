@@ -1,1 +1,331 @@
 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scientific Calculator</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        /* * ADVANCED CALCULATOR STYLESHEET
+         * Design Goals:
+         * - Professional, high-contrast look and feel.
+         * - Clear visual distinction between button types (numbers, operators, functions).
+         * - Tactile feel with subtle gradients and shadows.
+         * - Fully responsive for all screen sizes.
+        */
+
+        /* Color Palette */
+        :root {
+            --bg-color: #212428; /* Dark charcoal background */
+            --calculator-bg: #2a2d32; /* Slightly lighter calculator body */
+            --display-bg: #1e2024; /* Recessed display background */
+            --text-color: #f0f0f0; /* Bright text for high contrast */
+            --history-text-color: #a0a0a0; /* Muted color for history */
+            
+            --btn-number-bg: #3c3f44; /* Neutral gray for numbers */
+            --btn-number-hover: #4a4d52;
+
+            --btn-function-bg: #334e68; /* Muted blue for functions */
+            --btn-function-hover: #406080;
+
+            --btn-operator-bg: #d97706; /* Vibrant orange for operators */
+            --btn-operator-hover: #f59e0b;
+        }
+
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            background-color: var(--bg-color);
+            font-family: 'Inter', sans-serif;
+        }
+
+        /* Calculator Container */
+        .calculator-container {
+            background: linear-gradient(145deg, #2e3136, #26292d);
+            border-radius: 20px;
+            box-shadow: 10px 10px 20px #1c1e21, -10px -10px 20px #383c43;
+            padding: 25px;
+            width: 100%;
+            max-width: 420px;
+            box-sizing: border-box;
+        }
+
+        /* Display Screen */
+        .display-screen {
+            background-color: var(--display-bg);
+            color: var(--text-color);
+            border-radius: 10px;
+            padding: 25px;
+            margin-bottom: 25px;
+            text-align: right;
+            box-shadow: inset 5px 5px 10px #1a1c1f, inset -5px -5px 10px #222429;
+        }
+
+        .history-display {
+            font-size: 1rem;
+            min-height: 22px;
+            color: var(--history-text-color);
+            word-wrap: break-word;
+        }
+
+        .main-display {
+            font-size: 3rem;
+            font-weight: 500;
+            word-wrap: break-word;
+            word-break: break-all;
+            min-height: 50px;
+        }
+
+        /* Buttons Grid */
+        .buttons-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 18px;
+        }
+
+        .btn {
+            padding: 20px 10px;
+            font-size: 1.2rem;
+            font-weight: 500;
+            font-family: 'Inter', sans-serif;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            color: var(--text-color);
+            transition: all 0.15s ease-in-out;
+            box-shadow: 4px 4px 8px #222529, -4px -4px 8px #32353b;
+            background: var(--btn-number-bg);
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 6px 6px 12px #222529, -6px -6px 12px #32353b;
+        }
+
+        .btn:active {
+            transform: translateY(0);
+            box-shadow: inset 3px 3px 6px #222529, inset -3px -3px 6px #32353b;
+        }
+
+        /* Button Specific Styles */
+        .btn.operator, .btn.equals {
+            background-color: var(--btn-operator-bg);
+            font-weight: 700;
+        }
+        .btn.operator:hover, .btn.equals:hover {
+            background-color: var(--btn-operator-hover);
+        }
+        .btn.operator:active, .btn.equals:active {
+             background-color: var(--btn-operator-bg);
+        }
+
+        .btn.function, .btn.clear, .btn.backspace {
+            background-color: var(--btn-function-bg);
+        }
+        .btn.function:hover, .btn.clear:hover, .btn.backspace:hover {
+            background-color: var(--btn-function-hover);
+        }
+        .btn.function:active, .btn.clear:active, .btn.backspace:active {
+            background-color: var(--btn-function-bg);
+        }
+
+        .btn.equals {
+            grid-column: span 2;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 480px) {
+            .calculator-container {
+                padding: 15px;
+                border-radius: 0;
+                min-height: 100vh;
+                box-shadow: none;
+            }
+            .buttons-grid {
+                gap: 12px;
+            }
+            .btn {
+                padding: 18px 5px;
+                font-size: 1.1rem;
+                border-radius: 10px;
+            }
+            .main-display {
+                font-size: 2.5rem;
+            }
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="calculator-container">
+        <!-- Display -->
+        <div class="display-screen">
+            <div class="history-display" id="historyDisplay"></div>
+            <div class="main-display" id="mainDisplay">0</div>
+        </div>
+
+        <!-- Buttons -->
+        <div class="buttons-grid">
+            <button class="btn function" data-value="sin(">sin</button>
+            <button class="btn function" data-value="cos(">cos</button>
+            <button class="btn function" data-value="tan(">tan</button>
+            <button class="btn clear" data-value="C">C</button>
+            <button class="btn backspace" data-value="DEL">DEL</button>
+
+            <button class="btn function" data-value="log(">log</button>
+            <button class="btn function" data-value="ln(">ln</button>
+            <button class="btn" data-value="(">(</button>
+            <button class="btn" data-value=")">)</button>
+            <button class="btn operator" data-value="/">÷</button>
+
+            <button class="btn function" data-value="^">xʸ</button>
+            <button class="btn" data-value="7">7</button>
+            <button class="btn" data-value="8">8</button>
+            <button class="btn" data-value="9">9</button>
+            <button class="btn operator" data-value="*">×</button>
+            
+            <button class="btn function" data-value="sqrt(">√</button>
+            <button class="btn" data-value="4">4</button>
+            <button class="btn" data-value="5">5</button>
+            <button class="btn" data-value="6">6</button>
+            <button class="btn operator" data-value="-">−</button>
+            
+            <button class="btn" data-value="PI">π</button>
+            <button class="btn" data-value="1">1</button>
+            <button class="btn" data-value="2">2</button>
+            <button class="btn" data-value="3">3</button>
+            <button class="btn operator" data-value="+">+</button>
+            
+            <button class="btn" data-value="E">e</button>
+            <button class="btn" data-value="0">0</button>
+            <button class="btn" data-value=".">.</button>
+            <button class="btn equals" data-value="=">=</button>
+        </div>
+    </div>
+
+    <script>
+        // Get references to the DOM elements
+        const mainDisplay = document.getElementById('mainDisplay');
+        const historyDisplay = document.getElementById('historyDisplay');
+        const buttons = document.querySelector('.buttons-grid');
+
+        // State variables
+        let expression = '';
+        let shouldResetDisplay = false;
+
+        // Event listener for all button clicks
+        buttons.addEventListener('click', (e) => {
+            if (!e.target.matches('button')) return;
+
+            const key = e.target;
+            const value = key.dataset.value;
+
+            // Handle different button types
+            handleInput(value);
+        });
+        
+        // Function to handle all user input
+        function handleInput(value) {
+             if (value === 'C') {
+                // Clear all
+                expression = '';
+                mainDisplay.textContent = '0';
+                historyDisplay.textContent = '';
+            } else if (value === 'DEL') {
+                // Delete last character
+                if (mainDisplay.textContent === 'Error' || mainDisplay.textContent === 'Infinity' || shouldResetDisplay) {
+                     expression = '';
+                     mainDisplay.textContent = '0';
+                } else {
+                     mainDisplay.textContent = mainDisplay.textContent.slice(0, -1);
+                     if (mainDisplay.textContent === '') {
+                         mainDisplay.textContent = '0';
+                     }
+                }
+            } else if (value === '=') {
+                // Calculate the result
+                if (mainDisplay.textContent === 'Error' || mainDisplay.textContent === '') return;
+                try {
+                    expression = mainDisplay.textContent;
+                    const result = evaluateExpression(expression);
+                    historyDisplay.textContent = `${expression} =`;
+                    mainDisplay.textContent = result;
+                    shouldResetDisplay = true;
+                } catch (error) {
+                    mainDisplay.textContent = 'Error';
+                    shouldResetDisplay = true;
+                }
+            } else {
+                // Append value to the display
+                if (mainDisplay.textContent === '0' || mainDisplay.textContent === 'Error' || shouldResetDisplay) {
+                    mainDisplay.textContent = '';
+                    shouldResetDisplay = false;
+                }
+                
+                // Handle special constant values
+                if (value === 'PI') {
+                    mainDisplay.textContent += Math.PI.toFixed(10);
+                } else if (value === 'E') {
+                    mainDisplay.textContent += Math.E.toFixed(10);
+                } else {
+                    mainDisplay.textContent += value;
+                }
+            }
+        }
+
+        // Function to safely evaluate the mathematical expression
+        function evaluateExpression(expr) {
+            // Sanitize and prepare the expression for evaluation
+            let evalExpr = expr
+                .replace(/×/g, '*')
+                .replace(/÷/g, '/')
+                .replace(/\^/g, '**')
+                .replace(/sqrt\(/g, 'Math.sqrt(')
+                .replace(/log\(/g, 'Math.log10(')
+                .replace(/ln\(/g, 'Math.log(')
+                .replace(/sin\(/g, 'Math.sin(Math.PI/180 *')
+                .replace(/cos\(/g, 'Math.cos(Math.PI/180 *')
+                .replace(/tan\(/g, 'Math.tan(Math.PI/180 *');
+
+            // Using Function constructor for safer evaluation than eval()
+            const result = new Function('return ' + evalExpr)();
+            
+            // Check for division by zero or invalid results
+            if (!isFinite(result)) {
+                return 'Error';
+            }
+            
+            // Round to avoid floating point inaccuracies
+            return parseFloat(result.toPrecision(12));
+        }
+        
+        // Keyboard Support
+        document.addEventListener('keydown', (e) => {
+            e.preventDefault();
+            const keyMap = {
+                '0': '0', '1': '1', '2': '2', '3': '3', '4': '4',
+                '5': '5', '6': '6', '7': '7', '8': '8', '9': '9',
+                '.': '.', '+': '+', '-': '-', '*': '*', '/': '/',
+                '(': '(', ')': ')', '^': '^',
+                'Enter': '=', '=': '=',
+                'Backspace': 'DEL',
+                'c': 'C', 'C': 'C',
+                's': 'sin(', 'S': 'sin(',
+                'o': 'cos(', 'O': 'cos(',
+                't': 'tan(', 'T': 'tan(',
+                'l': 'log(', 'L': 'log('
+            };
+            
+            if (keyMap[e.key] !== undefined) {
+                handleInput(keyMap[e.key]);
+            }
+        });
+
+    </script>
+</body>
+</html>
